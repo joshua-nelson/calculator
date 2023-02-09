@@ -1,36 +1,67 @@
-const btns = Array.from(document.querySelectorAll('.btn'));
+const numberButtons = Array.from(document.querySelectorAll('.btn-number'));
+const operatorButtons = Array.from(document.querySelectorAll('.btn-operator'));
+const displayText = document.querySelector('.calculator__text');
+const operators = ['+', '*', '/', '-','.'];
+
+let displayValue = '';
+let secondValue = '';
+let operatorValue = '';
 let calculation = [];
-let currentCalculation = [];
-const operators = ['+', '-', '*', '/','.','='];
+let operatorPressed = false;
 
 
 
-function readInput(event){
+const operations = {
+
+    '+' : function (x, y) {
+        return x + y;
+    },
+    
+    '*' : function (x,y) {
+        return x * y;
+    },
+    
+    '/' : function (x,y){
+        return x / y;
+    },
+    
+    '-' : function (x,y) {
+        return x - y;
+    },
+
+    'clear' : function() {
+        displayValue = '';
+        updateDisplay();
+    }
+}
+
+
+function operate(operator, x , y) {
+    
+    return operations[operator](x,y);
+    
+}
+
+
+function getDataValue(event){
    return event.target.getAttribute('data-value');
 }
 
-function buildCalculation(input){
-    
-    
-
-    // If not in operator list push to currentCalc
-    if(!operators.includes(input)) {
-        currentCalculation.push(input);
-    } else if(operators.includes(input)){
-        calculation.push(currentCalculation);
-        currentCalculation.push(input);
-    }
-
-    // if in operator list push currentCalc and start new currentCalc
-
-    
-
-
-    console.log(calculation);
+function updateDisplay(value){
+    displayText.textContent = value;
 }
 
-btns.forEach(btn => {
-    btn.addEventListener('click',function(e){
-        buildCalculation(readInput(e));
-    });
+function updateOperator(operator) {
+    operatorValue = operator;
+    console.log(operator);
+}
+
+
+
+numberButtons.forEach(button => {
+    button.addEventListener('click', (e) => updateDisplay(getDataValue(e)));
 });
+
+operatorButtons.forEach(button => {
+    button.addEventListener('click', (e) => updateOperator(getDataValue(e)));
+})

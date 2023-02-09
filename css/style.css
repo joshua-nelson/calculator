@@ -27,11 +27,17 @@ body {
     display: flex;
     margin-top: 5px;
     padding-top: 10px;
+    gap: 1rem;
     background-color: lightgray;
+    flex-direction: column;
     justify-content: flex-end;
 }
 
 .calculator__text {
+    align-self: flex-end;
+}
+
+.calculator__operation {
     align-self: flex-end;
 }
 
