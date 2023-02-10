@@ -10,6 +10,10 @@ body {
     min-height: 100vh;
 }
 
+.active {
+    background-color: red;
+}
+
 .calculator {
     height: 60vh;
     width: 40vw;
