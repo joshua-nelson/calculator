@@ -43,7 +43,9 @@ const operations = {
 
 let calc = {};
 
-
+function clear(){
+    calc = {};
+}
 function operate(operator, x , y) {
     
  
@@ -51,21 +53,38 @@ function operate(operator, x , y) {
     y = parseInt(y);
 
     let result = operations[operator](x,y);
-    calculationArray = [];
+    
     updateDisplay(result);
+    clear();
+    console.log(operatorActive);
+    buildCalculation(currentOperator,result);
+
     
 }
 
-function buildCalculation(){
+function buildCalculation(dataValue, previousResult){
+
+    let secondOperatorPressed = operatorActive && 'first-value' in calc;
+    let equalsPressed = operatorActive && currentOperator == '=';
     // If operator pressed and first value not set. Set first value
-  
+    
     if(operatorActive && !('first-value' in calc)) {
-        calc['first-value'] = displayText.textContent;
-        calc['operator'] = currentOperator;
-    } else if (operatorActive && 'first-value' in calc) {
+        if(previousResult) {
+            calc['first-value'] = previousResult;
+        } else {
+            calc['first-value'] = displayText.textContent;
+        }
+        
+        calc['operator'] = dataValue;
+    } else if ( secondOperatorPressed || equalsPressed) {
         calc['second-value'] = displayText.textContent;
+        console.log(calc);
         operate(calc['operator'],calc['first-value'], calc['second-value'])
+
+
     }
+
+    console.log(calc);
 }
 
 
@@ -87,8 +106,8 @@ function updateDisplay(value){
     
 }
 
-function toggleActive(button) {
-    buttonClassList = button.target.classList;
+function toggleActive(operatorEvent) {
+    buttonClassList = operatorEvent.target.classList;
     
     if(buttonClassList.contains('active')) {
         buttonClassList.remove('active');
@@ -96,16 +115,23 @@ function toggleActive(button) {
     } else {
         buttonClassList.add('active')
         operatorActive = true;
-        console.log(currentOperator);
-        buildCalculation();
+        
     }
+
+   
     
 }
 
 function updateOperator(operator) {
     numberPressed = false;
     currentOperator = getDataValue(operator);
+    operatorButtons.forEach(btn => {
+        if(btn.classList.contains('active')) {
+            btn.classList.remove('active');
+        }
+    });
     toggleActive(operator);
+    buildCalculation(getDataValue(operator));
     
 }
 
