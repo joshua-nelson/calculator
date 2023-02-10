@@ -5,9 +5,10 @@ const operators = ['+', '*', '/', '-','.'];
 
 let displayValue = '';
 let secondValue = '';
+let firstValue = '';
 let operatorValue = null;
-let calculation = [];
 let operatorPressed = false;
+let shouldResetDisplay = false;
 
 
 
@@ -35,17 +36,24 @@ const operations = {
 
 
 function operate(operator, x , y) {
+    
+ 
     x = parseInt(x);
     y = parseInt(y);
 
     let result = operations[operator](x,y);
-    operatorValue = null;
+    operatorPressed = false;
     
-
-
-
     return result;
     
+}
+
+function clear() {
+    updateDisplay(' ');
+    firstValue = '';
+    secondValue = '';
+    operatorValue = '';
+    operatorPressed = false;
 }
 
 
@@ -54,23 +62,27 @@ function getDataValue(event){
 }
 
 function updateDisplay(value){
-    if(displayText.textContent !== '0' && operatorValue == null) {
-        displayText.textContent += value;
-    } else if (displayText.textContent !== null) {
-        displayText.textContent = value;
-    }
+   
+    displayText.textContent = value;
     
 }
 
 function updateOperator(operator) {
-   
-    if(operatorValue !== null) {
+    if(operator == 'clear') clear();
+ 
+    if(operatorPressed == true && operate != '=') {
         let secondValue = displayText.textContent;
-        displayText.textContent = operate(operatorValue,firstValue,secondValue);
+        firstValue = operate(operatorValue,firstValue,secondValue);
+        updateDisplay(firstValue);
+        operatorPressed = false;
+        shouldResetDisplay = true;
+    } else {
+        firstValue = displayText.textContent;
+        operatorValue = operator;
+        operatorPressed = true;
     }
     
-    firstValue = displayText.textContent;
-    operatorValue = operator;
+    
     
 }
 
