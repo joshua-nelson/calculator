@@ -1,6 +1,6 @@
-const numberButtons = Array.from(document.querySelectorAll('.btn-number'));
-const operatorButtons = Array.from(document.querySelectorAll('.btn-operator'));
-const displayText = document.querySelector('.calculator__text');
+const buttons = Array.from(document.querySelectorAll('.btn'));
+//const operatorButtons = Array.from(document.querySelectorAll('.btn-operator'));
+const calculatorDisplay = document.querySelector('.calculator__text');
 const operators = ['+', '*', '/', '-',];
 
 // let displayValue = '';
@@ -10,14 +10,14 @@ const operators = ['+', '*', '/', '-',];
 // let operatorPressed = false;
 // let shouldResetDisplay = false;
 
-let calculationArray = [];
+let currentNumberArray = [];
 let numberPressed = false;
 let operatorActive = false;
 let currentOperator;
 let previousOperator;
 let currentNumber;
 
-console.log(calculationArray.length);
+calculatorDisplay.textContent = '0'
 
 const operations = {
 
@@ -44,7 +44,21 @@ const operations = {
 let calc = {};
 
 function clear(){
+    currentNumberArray = [];
     calc = {};
+    buttons.forEach(button => {
+        if(button.classList.contains('active')) {
+            button.classList.remove('active')
+            operatorActive = false;
+        };
+    
+    });
+
+};
+
+function resetCalculation() {
+    currentNumberArray = [];
+    delete calc['second-value'];
 }
 function operate(operator, x , y) {
     
@@ -53,102 +67,140 @@ function operate(operator, x , y) {
     y = parseInt(y);
 
     let result = operations[operator](x,y);
-    
+    //console.log(calc['operator']);
     updateDisplay(result);
-    clear();
-    console.log(operatorActive);
-    buildCalculation(currentOperator,result);
-
+   
+    console.log(result);
+    resetCalculation();
+    return result;
     
 }
 
-function buildCalculation(dataValue, previousResult){
+// function buildCalculation(dataValue, previousResult){
 
-    let secondOperatorPressed = operatorActive && 'first-value' in calc;
-    let equalsPressed = operatorActive && currentOperator == '=';
-    // If operator pressed and first value not set. Set first value
+//     let secondOperatorPressed = operatorActive && 'first-value' in calc;
+//     let equalsPressed = operatorActive && currentOperator == '=';
+//     // If operator pressed and first value not set. Set first value
     
-    if(operatorActive && !('first-value' in calc)) {
-        if(previousResult) {
-            calc['first-value'] = previousResult;
-        } else {
-            calc['first-value'] = displayText.textContent;
-        }
+//     if(operatorActive && !('first-value' in calc)) {
+//         if(previousResult) {
+//             calc['first-value'] = previousResult;
+//         } else {
+//             calc['first-value'] = calculatorDisplay.textContent;
+//         }
+//             calc['operator'] = dataValue;
         
-        calc['operator'] = dataValue;
-    } else if ( secondOperatorPressed || equalsPressed) {
-        calc['second-value'] = displayText.textContent;
+//     } else if ( secondOperatorPressed)  {
+
+//         calc['second-value'] = calculatorDisplay.textContent;
+//         //operate(calc['operator'],calc['first-value'], calc['second-value'])
+
+
+//     } 
+//     console.log(calc);
+// }
+
+function buildCalculation(buttonType, buttonValue) {
+ 
+    
+    if(buttonType == 'number' && !operatorActive) {
+        currentNumberArray.push(buttonValue);
+        currentNumber = currentNumberArray.join('');
+        updateDisplay(currentNumber);
+        calc['first-value'] = currentNumber;
+
+    } else if (buttonType == 'number' && operatorActive) {
+        currentNumberArray.push(buttonValue);
+        currentNumber = currentNumberArray.join('');
+        updateDisplay(currentNumber);
+        calc['second-value'] = currentNumber;
+    } else if (buttonType == 'operator' && !operatorActive) {
+        calc['operator'] = buttonValue;
+        currentNumberArray = [];
+    } else if (buttonType == 'operator' && operatorActive) {
         console.log(calc);
-        operate(calc['operator'],calc['first-value'], calc['second-value'])
-
-
+        calc['first-value'] = operate(calc['operator'], calc['first-value'], calc['second-value']);
+        calc['operator'] = buttonValue;
+    } else if (buttonType == 'operator' && buttonValue == '=') {
+        operate(calc['operator'], calc['first-value'], calc['second-value']);
     }
 
     console.log(calc);
-}
 
+}
 
 function getDataValue(event){
    return event.target.getAttribute('data-value');
 }
 
 function updateDisplay(value){
-   
-    if(calculationArray.length == 0 && numberPressed == false) {
-        displayText.textContent = value;
-    } else if (numberPressed && !operatorActive) {
-        displayText.textContent += value;
-    } else if (!numberPressed  && operatorActive){
-        displayText.textContent += value;
-    } else if (numberPressed && operatorActive) {
-        displayText.textContent += value;
-    }
     
+    calculatorDisplay.textContent = value;
+
+    // if(currentNumberArray.length == 0 || calculatorDisplay.textContent == '0' && numberPressed == false) {
+    //     calculatorDisplay.textContent = value;
+    // } else if (numberPressed && !operatorActive) {
+    //     calculatorDisplay.textContent += value;
+    // } else if (!numberPressed  && operatorActive){
+    //     calculatorDisplay.textContent += value;
+    // } else if (numberPressed && operatorActive) {
+    //     calculatorDisplay.textContent += value;
+    // }
+    // console.log(calc);
 }
 
 function toggleActive(operatorEvent) {
     buttonClassList = operatorEvent.target.classList;
     
-    if(buttonClassList.contains('active')) {
-        buttonClassList.remove('active');
-        operatorActive = false;
-    } else {
-        buttonClassList.add('active')
-        operatorActive = true;
-        
-    }
-
-   
-    
-}
-
-function updateOperator(operator) {
-    numberPressed = false;
-    currentOperator = getDataValue(operator);
-    operatorButtons.forEach(btn => {
-        if(btn.classList.contains('active')) {
-            btn.classList.remove('active');
+    buttons.forEach(button => {
+        if(button.classList.contains('active')) {
+            button.classList.remove('active')
+            operatorActive = false;
         }
     });
-    toggleActive(operator);
-    buildCalculation(getDataValue(operator));
+
+    buttonClassList.add('active');
+    operatorActive = true;
+
+
+    // if(buttonClassList.contains('active')) {
+    //     buttonClassList.remove('active');
+    //     operatorActive = false;
+    // } else {
+    //     buttonClassList.add('active')
+    //     operatorActive = true;
+        
+    // }
+
+   
     
 }
 
-function updateNumber(number) {
-    currentNumber = getDataValue(number); 
-    updateDisplay(currentNumber);
-    numberPressed = true;
+
+function getButtonValue(ButtonEvent) {
+    let type = ButtonEvent.target.getAttribute('data-type');
+    let value = ButtonEvent.target.getAttribute('data-value');
+
+
+    
+    
+    if(type == 'operator') {
+        buildCalculation(type, value);
+        toggleActive(ButtonEvent);
+    } else if (value == 'clear') {
+        clear()
+    } else {
+        buildCalculation(type, value);
+    }
+    
+
    
 }
 
-numberButtons.forEach(button => {
-    button.addEventListener('click', (e) => updateNumber(e));
+buttons.forEach(button => {
+    button.addEventListener('click', (e) => getButtonValue(e));
 });
 
-operatorButtons.forEach(button => {
-    button.addEventListener('click', (e) => updateOperator(e));
-})
 
 
 
