@@ -68,7 +68,9 @@ function operate(operator, x , y) {
 
     let result = operations[operator](x,y);
 
-    result = result.toFixed(8);
+    if(String(result).includes('.')) {
+        result = result.toFixed(8);
+    }
     //console.log(calc['operator']);
     updateDisplay(result);
    
