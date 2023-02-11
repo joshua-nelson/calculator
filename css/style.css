@@ -28,7 +28,7 @@ body {
 
 .calculator {
     height: 60vh;
-    width: 40vw;
+    width: 20vw;
     background-color: var(--clr-primary-400);
     border: 5px solid #030301;
     display:flex;
