@@ -67,6 +67,8 @@ function operate(operator, x , y) {
     y = parseInt(y);
 
     let result = operations[operator](x,y);
+
+    result = result.toFixed(8);
     //console.log(calc['operator']);
     updateDisplay(result);
    
@@ -102,7 +104,6 @@ function operate(operator, x , y) {
 
 function buildCalculation(buttonType, buttonValue) {
  
-    
     if(buttonType == 'number' && !operatorActive) {
         currentNumberArray.push(buttonValue);
         currentNumber = currentNumberArray.join('');
@@ -113,7 +114,9 @@ function buildCalculation(buttonType, buttonValue) {
         currentNumberArray.push(buttonValue);
         currentNumber = currentNumberArray.join('');
         updateDisplay(currentNumber);
+       
         calc['second-value'] = currentNumber;
+       
     } else if (buttonType == 'operator' && !operatorActive) {
         calc['operator'] = buttonValue;
         currentNumberArray = [];
